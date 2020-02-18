@@ -1,0 +1,2 @@
+/usr/bin/ar qc libbucketLib.a  CMakeFiles/bucketLib.dir/BucketScheme.cu.o
+/usr/bin/ranlib libbucketLib.a

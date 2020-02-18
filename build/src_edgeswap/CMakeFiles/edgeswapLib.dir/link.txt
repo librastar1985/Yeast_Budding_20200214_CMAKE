@@ -1,0 +1,2 @@
+/usr/bin/ar qc libedgeswapLib.a  CMakeFiles/edgeswapLib.dir/Edgeswap_test.cu.o
+/usr/bin/ranlib libedgeswapLib.a

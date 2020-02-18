@@ -1,0 +1,51 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /afs/crc.nd.edu/user/k/ktsai/BuddingCode_nucleus5/budding_cmake/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/gmake" "cmTC_c95d3/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_c95d3.dir/build.make CMakeFiles/cmTC_c95d3.dir/build
+gmake[1]: Entering directory `/afs/crc.nd.edu/user/k/ktsai/BuddingCode_nucleus5/budding_cmake/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_c95d3.dir/CheckSymbolExists.cxx.o
+/opt/crc/g/gcc/7.1.0/bin/g++     -o CMakeFiles/cmTC_c95d3.dir/CheckSymbolExists.cxx.o -c /afs/crc.nd.edu/user/k/ktsai/BuddingCode_nucleus5/budding_cmake/build/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx
+Linking CXX executable cmTC_c95d3
+/afs/crc.nd.edu/x86_64_linux/c/cmake/3.13.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_c95d3.dir/link.txt --verbose=1
+/opt/crc/g/gcc/7.1.0/bin/g++       -rdynamic CMakeFiles/cmTC_c95d3.dir/CheckSymbolExists.cxx.o  -o cmTC_c95d3 
+CMakeFiles/cmTC_c95d3.dir/CheckSymbolExists.cxx.o: In function `main':
+CheckSymbolExists.cxx:(.text+0x16): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+gmake[1]: *** [cmTC_c95d3] Error 1
+gmake[1]: Leaving directory `/afs/crc.nd.edu/user/k/ktsai/BuddingCode_nucleus5/budding_cmake/build/CMakeFiles/CMakeTmp'
+gmake: *** [cmTC_c95d3/fast] Error 2
+
+File /afs/crc.nd.edu/user/k/ktsai/BuddingCode_nucleus5/budding_cmake/build/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /afs/crc.nd.edu/user/k/ktsai/BuddingCode_nucleus5/budding_cmake/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/gmake" "cmTC_e73ba/fast"
+/usr/bin/gmake -f CMakeFiles/cmTC_e73ba.dir/build.make CMakeFiles/cmTC_e73ba.dir/build
+gmake[1]: Entering directory `/afs/crc.nd.edu/user/k/ktsai/BuddingCode_nucleus5/budding_cmake/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_e73ba.dir/CheckFunctionExists.cxx.o
+/opt/crc/g/gcc/7.1.0/bin/g++    -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_e73ba.dir/CheckFunctionExists.cxx.o -c /afs/crc.nd.edu/user/k/ktsai/BuddingCode_nucleus5/budding_cmake/build/CMakeFiles/CheckLibraryExists/CheckFunctionExists.cxx
+Linking CXX executable cmTC_e73ba
+/afs/crc.nd.edu/x86_64_linux/c/cmake/3.13.2/bin/cmake -E cmake_link_script CMakeFiles/cmTC_e73ba.dir/link.txt --verbose=1
+/opt/crc/g/gcc/7.1.0/bin/g++   -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_e73ba.dir/CheckFunctionExists.cxx.o  -o cmTC_e73ba -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+gmake[1]: *** [cmTC_e73ba] Error 1
+gmake[1]: Leaving directory `/afs/crc.nd.edu/user/k/ktsai/BuddingCode_nucleus5/budding_cmake/build/CMakeFiles/CMakeTmp'
+gmake: *** [cmTC_e73ba/fast] Error 2
+
+
