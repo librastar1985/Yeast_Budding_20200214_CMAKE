@@ -9,11 +9,16 @@ Max simulation time: 400*500*100 iterations
 ===========================================================================
 WHAT TO DO:
 	1. Each parameter set should be simulated 3 times.
-	2. 
+	2. Parameters are changed in the system.cu file.
+	3. Corresponding parameters as in the following tables:
+		-> generalParams.strain_threshod = Exp thresh.
+		-> scale_linear = ks
+		-> scale_bend = kb
+		-> scale_area = Area const ratio.
 
 
 START:
-1. Exp thresh. = 0.01, Area const ratio. = 0.1, Turgor = 0.2
+Case 1. Exp thresh. = 0.01, Area const ratio. = 0.1, Turgor = 0.2
 	FvK = 3.5: ratio[ks, kb] = [0.5, 0.052]: bud = 3
 	FvK = 3.0: ratio[ks, kb] = [0.5, 0.060]: bud = 3
 	FvK = 2.5: ratio[ks, kb] = [0.5, 0.0725]: bud = 3
@@ -22,7 +27,7 @@ START:
 	FvK = 1.0: ratio[ks, kb] = [0.5, 0.181]: bud = 0
 	FvK = 0.5: ratio[ks, kb] = [0.5, 0.362]: bud = 0
 
-3. Exp thresh. = 0.01, Area const ratio. = 0.5, Turgor = 0.2
+Case 3. Exp thresh. = 0.01, Area const ratio. = 0.5, Turgor = 0.2
 	FvK = 3.5: ratio[ks, kb] = []
 	FvK = 3.0: ratio[ks, kb] = []
 	FvK = 2.5: ratio[ks, kb] = []
@@ -63,7 +68,7 @@ START:
 	FvK = 1.0: ratio[ks, kb] = []
 	FvK = 0.5: ratio[ks, kb] = []
 
-2. Exp thresh. = 0.01, Area const ratio. = 1.0, Turgor = 0.2
+Case 4. Exp thresh. = 0.01, Area const ratio. = 1.0, Turgor = 0.2
 	FvK = 3.5: ratio[ks, kb] = []
 	FvK = 3.0: ratio[ks, kb] = []
 	FvK = 2.5: ratio[ks, kb] = []
