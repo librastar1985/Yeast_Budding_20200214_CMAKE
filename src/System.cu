@@ -327,9 +327,9 @@ void System::solveSystem() {
 	generalParams.length_scale = 1.0;//0.85;//0.1577;//1.0*generalParams.Rmin;// 0.8333;
 	//std::cout<<"equilibrium length of each segment of the septin ring = "<<generalParams.length_scale<<std::endl;
 
-	double scale_linear = linearSpringInfoVecs.spring_constant*1.0;//0.25;//25.0/2.5;//75.0/15.0;
-	double scale_bend = bendingTriangleInfoVecs.spring_constant*0.02;//0.05;//10.0/1.0;//75.0/7.5;
-	double scale_area = areaTriangleInfoVecs.spring_constant*1.0;//0.25;//50.0/5.0;//75.0/15.0;
+	double scale_linear = linearSpringInfoVecs.spring_constant*0.5;//0.25;//25.0/2.5;//75.0/15.0;
+	double scale_bend = bendingTriangleInfoVecs.spring_constant*0.052;//0.05;//10.0/1.0;//75.0/7.5;
+	double scale_area = areaTriangleInfoVecs.spring_constant*0.2;//0.25;//50.0/5.0;//75.0/15.0;
 	std::cout<<"weakened region linear = "<<scale_linear<<std::endl;
 	std::cout<<"weakened region bend = "<<scale_bend<<std::endl;
 	std::cout<<"weakened region area = "<<scale_area<<std::endl;
