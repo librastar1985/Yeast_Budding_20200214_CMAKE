@@ -114,7 +114,7 @@ void System::solveSystem() {
 	double MAX_VOLUME_RATIO = 1.5;
 	int MAX_GROWTH_NUMBER = 1;
 	std::cout<<"MAX_GROWTH_NUMBER (# of edge to expand) = "<<MAX_GROWTH_NUMBER<<std::endl;
-	int GROWTH_FREQUENCY = 100;
+	int GROWTH_FREQUENCY = 200;
 	std::cout<<"GROWTH_FREQ (how many times Max_Runtime has to be reached to perform growth"<<GROWTH_FREQUENCY<<std::endl;
 	double energy_gradient_threshold = 0.01;
 	std::cout<<"ENERGY_GRADIENT_THRESHOLD = "<<energy_gradient_threshold<<std::endl;
@@ -149,7 +149,7 @@ void System::solveSystem() {
 
 	generalParams.insertion_energy_cost = -log(0.0025);
 	std::cout<<"GROWTH: material insertion energy cost (dependent on local chemical concentration) = "<<generalParams.insertion_energy_cost<<std::endl;
-	generalParams.strain_threshold = 0.01;//0.01;
+	generalParams.strain_threshold = 0.05;//0.01;
 	std::cout<<"GROWTH: critical strain threshold used for insertion probability calculation = "<<generalParams.strain_threshold<<std::endl;
 
 	generalParams.growth_energy_scaling = 1.0;//0.01375;
@@ -164,7 +164,7 @@ void System::solveSystem() {
 	//////////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////////
 
-	double Max_Runtime = generalParams.dt*400.0;
+	double Max_Runtime = generalParams.dt*200.0;
 	double Max_RunStep = Max_Runtime/generalParams.dt;
 	std::cout<<"Max runtime = "<<Max_Runtime<<std::endl;
 	std::cout<<"Max runstep = "<<Max_RunStep<<std::endl;
@@ -327,9 +327,9 @@ void System::solveSystem() {
 	generalParams.length_scale = 1.0;//0.85;//0.1577;//1.0*generalParams.Rmin;// 0.8333;
 	//std::cout<<"equilibrium length of each segment of the septin ring = "<<generalParams.length_scale<<std::endl;
 
-	double scale_linear = linearSpringInfoVecs.spring_constant*0.5;//0.25;//25.0/2.5;//75.0/15.0;
-	double scale_bend = bendingTriangleInfoVecs.spring_constant*0.052;//0.05;//10.0/1.0;//75.0/7.5;
-	double scale_area = areaTriangleInfoVecs.spring_constant*0.5;//0.25;//50.0/5.0;//75.0/15.0;
+	double scale_linear = linearSpringInfoVecs.spring_constant*1.0;//0.25;//25.0/2.5;//75.0/15.0;
+	double scale_bend = bendingTriangleInfoVecs.spring_constant*0.02;//0.05;//10.0/1.0;//75.0/7.5;
+	double scale_area = areaTriangleInfoVecs.spring_constant*1.0;//0.25;//50.0/5.0;//75.0/15.0;
 	std::cout<<"weakened region linear = "<<scale_linear<<std::endl;
 	std::cout<<"weakened region bend = "<<scale_bend<<std::endl;
 	std::cout<<"weakened region area = "<<scale_area<<std::endl;
@@ -1085,7 +1085,7 @@ void System::solveSystem() {
  							capsidInfoVecs,
  							generalParams,
 							 auxVecs);
-					if ((generalParams.true_current_total_volume/initial_volume) < 0.6 || generalParams.true_current_total_volume/initial_volume >= 1.50){
+					if ((generalParams.true_current_total_volume/initial_volume) < 0.6 || generalParams.true_current_total_volume/initial_volume >= MAX_VOLUME_RATIO){
 						generalParams.true_num_edges = 0;
 						for (int i = 0; i < coordInfoVecs.num_edges; i++){
 							if (coordInfoVecs.edges2Nodes_1[i] != INT_MAX && coordInfoVecs.edges2Nodes_2[i] != INT_MAX){
@@ -1099,7 +1099,7 @@ void System::solveSystem() {
 						if (generalParams.true_current_total_volume/initial_volume < 0.6){
 							std::cout<<"Cell over compression 60%"<<std::endl;
 						}
-						else if (generalParams.true_current_total_volume/initial_volume >= 1.50){
+						else if (generalParams.true_current_total_volume/initial_volume >= MAX_VOLUME_RATIO){
 							std::cout<<"Target volume ratio exceeded. Current volume ratio = "<<generalParams.true_current_total_volume/initial_volume<<std::endl;
 						}
 
@@ -1155,16 +1155,170 @@ void System::solveSystem() {
 				//std::cout<<"new_total_energy = "<<new_total_energy<<std::endl;
 
 				energy_gradient = sqrt((new_total_energy - old_total_energy)*(new_total_energy - old_total_energy));
+				old_total_energy = new_total_energy;
+				current_time+=generalParams.dt;
 				if (current_time >= Max_Runtime*0.25 && energy_gradient < energy_gradient_threshold){
 					end_of_relaxation = true;
-					break;
+					
+					if (end_of_relaxation == true){
+						//	std::cout<<"SIMULATIONs TRIGGER REPOSITIONING AND EDGESWAP?"<<std::endl;
+
+							newcenterX = 0.0;
+							newcenterY = 0.0;
+							newcenterZ = 0.0;
+						//	std::cout<<"HERE?"<<std::endl;
+							
+							for (int i = 0; i < generalParams.maxNodeCount; i++){//for (int i = 0; i < coordInfoVecs.nodeLocX.size(); i++){
+								//std::cout<<i<<std::endl;
+								newcenterX += coordInfoVecs.nodeLocX[i];
+								//std::cout<<newcenterX<<std::endl;
+								newcenterY += coordInfoVecs.nodeLocY[i];
+								//std::cout<<newcenterY<<std::endl;
+								newcenterZ += coordInfoVecs.nodeLocZ[i];
+								//std::cout<<newcenterZ<<std::endl;
+							}
+						//	std::cout<<"HERE2?"<<std::endl;
+							newcenterX = newcenterX/generalParams.maxNodeCount; //coordInfoVecs.nodeLocX.size();
+							newcenterY = newcenterY/generalParams.maxNodeCount; //coordInfoVecs.nodeLocX.size();
+							newcenterZ = newcenterZ/generalParams.maxNodeCount; //coordInfoVecs.nodeLocX.size();
+							displacementX = newcenterX - generalParams.centerX;
+							displacementY = newcenterY - generalParams.centerY;
+							displacementZ = newcenterZ - generalParams.centerZ;
+							
+						//	std::cout<<"HERE3?"<<std::endl;
+							for (int i = 0; i < generalParams.maxNodeCount; i++){
+							coordInfoVecs.nodeLocX[i] += -displacementX;
+							coordInfoVecs.nodeLocY[i] += -displacementY;
+							coordInfoVecs.nodeLocZ[i] += -displacementZ;
+							}
+						//	std::cout<<"HERE4?"<<std::endl;
+							for (int i = 0; i < ljInfoVecs.LJ_PosX_all.size(); i++){
+								ljInfoVecs.LJ_PosX_all[i] += -displacementX;
+								ljInfoVecs.LJ_PosY_all[i] += -displacementY;
+								ljInfoVecs.LJ_PosZ_all[i] += -displacementZ;
+							}
+
+						//	std::cout<<"HERE5?"<<std::endl;
+						/*	int maxElementIndex = std::max_element(coordInfoVecs.nodeLocZ.begin(),coordInfoVecs.nodeLocZ.end()) - coordInfoVecs.nodeLocZ.begin();
+							for (int i = 0; i < generalParams.maxNodeCountLJ; i++){
+								if (i == 0){
+									filament_base[i] = maxElementIndex;
+									continue;
+								}
+								for (int j = 0; j < generalParams.maxNodeCount; j++){
+									double xsquared = (ljInfoVecs.LJ_PosX_all[i] - coordInfoVecs.nodeLocX[j])*
+														(ljInfoVecs.LJ_PosX_all[i] - coordInfoVecs.nodeLocX[j]);
+									double ysquared = (ljInfoVecs.LJ_PosY_all[i] - coordInfoVecs.nodeLocY[j])*
+														(ljInfoVecs.LJ_PosY_all[i] - coordInfoVecs.nodeLocY[j]);
+									double zsquared = (ljInfoVecs.LJ_PosZ_all[i] - coordInfoVecs.nodeLocZ[j])*
+														(ljInfoVecs.LJ_PosZ_all[i] - coordInfoVecs.nodeLocZ[j]);
+									double R = sqrt(xsquared + ysquared + zsquared);
+									if (R < (max_height - min_height)/2.0 && j != maxElementIndex){
+										filament_base[i] = j;
+										break;
+									}
+									else{filament_base[i] = -1;}
+								}
+							} */
+						//	std::cout<<"ERROR 0"<<std::endl;
+
+							ComputeVolume(
+								generalParams,
+								coordInfoVecs,
+								linearSpringInfoVecs,
+								ljInfoVecs);
+							//std::cout<<"ERROR 1"<<std::endl;
+							
+							//std::cout<<"BEGIN EDGESWAP ALGORITHM"<<std::endl;
+							edgeswap_ptr->transferDtoH(generalParams, coordInfoVecs, build_ptr->hostSetInfoVecs);
+							//std::cout<<"ERROR 1.5"<<std::endl;
+							VectorShuffleForEdgeswapLoop.clear();
+							for (int i = 0; i < coordInfoVecs.num_edges; i++){
+								if (generalParams.edges_in_upperhem_list[i] >= 0 && 
+									generalParams.edges_in_upperhem_list[i] != INT_MAX &&
+									generalParams.boundaries_in_upperhem[i] != 1)
+									VectorShuffleForEdgeswapLoop.push_back(generalParams.edges_in_upperhem_list[i]);
+								}	
+						//	std::cout<<"STOPPED BEFORE edgeswap"<<std::endl;
+							//std::random_device rand_dev;
+							//std::mt19937 generator_edgeswap(rand_dev());
+							num_edge_loop = round(true_num_edges_in_upperhem*SAMPLE_SIZE);
+							if (num_edge_loop == 0){
+								num_edge_loop = 1;
+							}
+							//generalParams.kT = generalParams.kT*2.0;
+						//	double kT_reduction = generalParams.kT/5.0;
+						//while (generalParams.kT > 0.15){
+							std::shuffle(std::begin(VectorShuffleForEdgeswapLoop), std::end(VectorShuffleForEdgeswapLoop), generator_edgeswap);
+							//	std::shuffle(std::begin(generalParams.edges_in_upperhem_list), std::end(generalParams.edges_in_upperhem_list), generator_edgeswap);
+								//for (int edge_loop = 0; edge_loop < VectorShuffleForEdgeswapLoop.size(); edge_loop++){
+								for (int edge_loop = 0; edge_loop < num_edge_loop; edge_loop++) {
+									//std::cout<<"edge_loop = "<<edge_loop<<std::endl;
+									
+									//std::random_device rand_dev;
+									//std::mt19937 generator(rand_dev());
+								
+								std::uniform_int_distribution<int> distribution(1,VectorShuffleForEdgeswapLoop.size());
+								
+								int dice_roll = distribution(generator_edgeswap);
+								
+								int edge = VectorShuffleForEdgeswapLoop[dice_roll - 1];
+								//int edge = dice_roll -1;
+								while (generalParams.boundaries_in_upperhem[edge] == 1 || edge == INT_MAX || edge < 0){
+										dice_roll = distribution(generator_edgeswap);
+										
+										edge =  generalParams.edges_in_upperhem_list[dice_roll - 1];
+										edge = dice_roll -1;
+									 }
+									//int edge = generalParams.edges_in_upperhem_list[edge_loop];
+									//int edge = VectorShuffleForEdgeswapLoop[edge_loop];
+									//std::cout<<"edge = "<<edge<<std::endl;
+									if (edge < 0 || edge == INT_MAX){
+										continue;
+									}
+
+									int ALPHA = edgeswap_ptr->edge_swap_host_vecs(
+										edge,
+										generalParams,
+										build_ptr->hostSetInfoVecs,
+										linearSpringInfoVecs,
+										bendingTriangleInfoVecs,
+										areaTriangleInfoVecs);
+									
+								}
+							//	std::cout<<"STOPPED after edgeswap"<<std::endl;
+						//		generalParams.kT -= kT_reduction;
+						//	}
+							//generalParams.kT = initial_kT;
+
+						//std::cout<<"IS IT NODES2TRIANGLES PROBLEM?"<<std::endl;
+						/*for (int u = 0; u < generalParams.maxNodeCount; u++){
+							int BETA = edgeswap_ptr->nodes2Triangles_host_vecs(
+								u,
+								build_ptr->hostSetInfoVecs,
+								coordInfoVecs,
+								generalParams,
+								auxVecs);
+						}*/
+						//std::cout<<"IT IS NOT"<<std::endl;
+							//NOTE: EDGESWAP ALGORITHM CURRENTLY IS WRITTEN TO ALLOW AT MOST 8 NEIGHBORING NODES PER NODE.
+							//std::cout<<"edgeswap done!"<<std::endl;
+							edgeswap_ptr->transferHtoD(generalParams, coordInfoVecs, build_ptr->hostSetInfoVecs);//Currently this is treated as a backup of coordInfoVecs
+							//std::cout<<"END EDGESWAP ALGORITHM"<<std::endl;
+							//std::cout<<"ERROR 2.5"<<std::endl;  
+							
+							//DETERMINE THE NORMAL VECTORS OF EACH NODE
+						
+						EDGESWAP_ALGORITHM_TRIGGERED = true;
+
+						}
+						break;
 				}
-			old_total_energy = new_total_energy;
-			current_time+=generalParams.dt;
+			
 			// std::cout<<"STOPPED at the end of one time step in relaxation"<<std::endl;
 
 						//	 std::cout<<"IT'S NOT"<<std::endl;
-						if (translate_counter % translate_frequency == 0 || end_of_relaxation == true){
+						if (translate_counter % translate_frequency == 0){// || end_of_relaxation == true){
 						//	std::cout<<"SIMULATIONs TRIGGER REPOSITIONING AND EDGESWAP?"<<std::endl;
 
 							newcenterX = 0.0;
